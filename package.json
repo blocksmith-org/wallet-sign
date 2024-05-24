@@ -1,0 +1,22 @@
+{
+  "name": "wallet-sign",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sign": "ts-node src/sign.ts"
+  },
+  "keywords": [],
+  "author": "djye",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@okxweb3/coin-base": "^1.0.8",
+    "@okxweb3/coin-bitcoin": "^1.0.19",
+    "@okxweb3/crypto-lib": "^1.0.2",
+    "dotenv": "^16.4.5"
+  }
+}
