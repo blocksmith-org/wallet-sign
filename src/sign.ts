@@ -1,3 +1,4 @@
+import { wordlists } from "@okxweb3/crypto-lib/dist/bip39";
 import {
   NewAddressParams,
   segwitType,
@@ -8,6 +9,12 @@ import { LtcWallet, wif2Public } from "@okxweb3/coin-bitcoin";
 import { base } from "@okxweb3/crypto-lib";
 import { config } from "dotenv";
 
+function validateMnemonic(mnemonic: string): string[] {
+    const words = mnemonic.split(" ");
+    const invalidWords = words.filter(word => !wordlists['EN'].includes(word));
+    return invalidWords;
+}
+
 (async () => {
   config();
   let wallet = new LtcWallet();
@@ -15,6 +22,14 @@ import { config } from "dotenv";
     index: 0,
     segwitType: segwitType.SEGWIT_NESTED_49,
   });
+  let mnemonic = process.env.MNEMONIC!;
+
+  let invalids = validateMnemonic(mnemonic);
+  if (invalids.length > 0) {
+    console.error(`invalid words: ${invalids}`);
+    return
+  }
+
   let param = {
     mnemonic: process.env.MNEMONIC!,
     hdPath: path,
