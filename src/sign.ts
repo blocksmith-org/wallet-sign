@@ -1,13 +1,7 @@
 import { wordlists } from "@okxweb3/crypto-lib/dist/bip39";
-import {
-  NewAddressParams,
-  segwitType,
-  SignTxParams,
-  VerifyMessageParams,
-} from "@okxweb3/coin-base";
-import { LtcWallet, wif2Public } from "@okxweb3/coin-bitcoin";
-import { base } from "@okxweb3/crypto-lib";
 import { config } from "dotenv";
+import { sign as signLtc } from "./eth";
+import { sign as signEth } from "./ltc";
 
 function validateMnemonic(mnemonic: string): string[] {
     const words = mnemonic.split(" ");
@@ -15,60 +9,27 @@ function validateMnemonic(mnemonic: string): string[] {
     return invalidWords;
 }
 
+
 (async () => {
   config();
-  let wallet = new LtcWallet();
-  let path = await wallet.getDerivedPath({
-    index: 0,
-    segwitType: segwitType.SEGWIT_NESTED_49,
-  });
   let mnemonic = process.env.MNEMONIC!;
-
   let invalids = validateMnemonic(mnemonic);
   if (invalids.length > 0) {
     console.error(`invalid words: ${invalids}`);
     return
   }
 
-  let param = {
-    mnemonic: process.env.MNEMONIC!,
-    hdPath: path,
-  };
-  let privateKey = await wallet.getDerivedPrivateKey(param);
-
-  let publicKey = base.toHex(wif2Public(privateKey, wallet.network()));
-
-  let newParam: NewAddressParams = {
-    privateKey,
-    addressType: "segwit_nested",
-  };
-  let address = await wallet.getNewAddress(newParam);
-  console.log(`address  : ${address.address}`);
-
   let message = process.env.MESSAGE!;
-  console.log(`message  : ${process.env.MESSAGE}`);
-
-  let signParam: SignTxParams = {
-    privateKey: privateKey,
-    data: {
-      message,
-    },
-  };
-  let signature = await wallet.signMessage(signParam);
-  console.log(`signature: ${signature}`);
-  console.log(`publicKey: ${publicKey}`);
-
-  let verifyParams: VerifyMessageParams = {
-    signature,
-    data: {
-      message,
-      publicKey,
-    },
-  };
-  let result = await wallet.verifyMessage(verifyParams);
-  if (!result) {
-    throw new Error("Failed to verify message");
+  switch (process.env.TOKEN!.toUpperCase()) {
+    case "LTC":
+        await signLtc(mnemonic, message);
+        return;
+    case "ETH":
+    case "MATIC":
+        await signEth(mnemonic, message);
+        return;
   }
+
 })().catch((error) => {
   console.error(error);
 });
