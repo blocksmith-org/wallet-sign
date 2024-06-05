@@ -27,7 +27,8 @@ function validateMnemonic(mnemonic: string): string[] {
         return;
     case "ETH":
     case "MATIC":
-        await signEth(mnemonic, message);
+        let hex = Buffer.from(message, 'utf-8').toString('hex');
+        await signEth(mnemonic, hex);
         return;
   }
 
