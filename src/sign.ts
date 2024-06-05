@@ -1,7 +1,7 @@
 import { wordlists } from "@okxweb3/crypto-lib/dist/bip39";
 import { config } from "dotenv";
-import { sign as signLtc } from "./eth";
-import { sign as signEth } from "./ltc";
+import { sign as signEth } from "./eth";
+import { sign as signLtc } from "./ltc";
 
 function validateMnemonic(mnemonic: string): string[] {
     const words = mnemonic.split(" ");
@@ -20,7 +20,8 @@ function validateMnemonic(mnemonic: string): string[] {
   }
 
   let message = process.env.MESSAGE!;
-  switch (process.env.TOKEN!.toUpperCase()) {
+  let token = process.env.TOKEN!.toUpperCase();
+  switch (token) {
     case "LTC":
         await signLtc(mnemonic, message);
         return;
