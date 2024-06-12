@@ -13,7 +13,7 @@ export async function sign(mnemonic: string, message: string) {
   };
   let privateKey = await wallet.getDerivedPrivateKey(param);
 
-  let type = MessageTypes.ETH_SIGN;
+  let type = MessageTypes.PERSONAL_SIGN;
   let newParam: NewAddressParams = {
     privateKey,
   };
